@@ -24,28 +24,40 @@ typedef struct ls_data{
    char** directories;
    int file_count;
    char** files;
+   int dne_count;
+   char** does_not_exist;
    int flagA;
    int flagT;
 }lsd;
+
+typedef struct directory_data{ //This will store the name of items inside a directory. 
+    char** items;
+}dd;
 
 lsd create_struct(int size) //function to make the struct. Size should be the maximum number of arguments you expect to encounter
 {
     lsd data;
     data.directory_count = 0;
     data.file_count = 0;
+    data.dne_count = 0;
     data.flagA = 0;
     data.flagT = 0;
     data.directories = malloc(size * sizeof(char*));
     data.files = malloc(size * sizeof(char*));
+    data.does_not_exist = malloc(size * sizeof(char*));
     return data;
 }
 
-void read_flag(char* param_1, lsd* data) //this function will check for specific flags
+int read_flag(char* param_1, lsd* data) //this function will check for specific flags
 {
-    int i = 0;
+    int i = 1;
     while(param_1[i] != '\0')
     {
-        if (param_1[i] == 'a')
+        if (param_1[i] != 'a' && param_1[i] != 't')
+        {
+            return i;
+        }
+        else if (param_1[i] == 'a')
         {
             data->flagA = 1;
         }
@@ -55,6 +67,7 @@ void read_flag(char* param_1, lsd* data) //this function will check for specific
         }
         i++;
     }
+    return -1;
 }
 
 int item_type(char* param_1) //this determines if an entry is a not a real path (-1), a directory (0) or a file (1)
@@ -63,7 +76,6 @@ int item_type(char* param_1) //this determines if an entry is a not a real path 
     int item_exist = lstat(param_1, &filestat);
     if (item_exist == -1)
     {
-        printf("%s does not exist\n", param_1);
         return -1;
     }
     else if (S_ISDIR(filestat.st_mode)) //if this is true, the item is a directory

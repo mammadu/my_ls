@@ -24,20 +24,31 @@ Where './my_ls' is the name of the program, '-at' are the possible flags allowed
 int main(int argc, char *argv[])
 {
     lsd data = create_struct(argc);
+    int flag_value;
     int flag_index = 0;
     for (int i = 1; i < argc; i++) //check all arguments for flags
     {
         if (argv[i][0] == '-')
         {
-            read_flag(argv[i], &data);
+            flag_value = read_flag(argv[i], &data);
             flag_index = i;
+        }
+        if (flag_value != -1)
+        {
+            printf("invalid option  -- '%c'", argv[i][flag_value]);
+            return -1;
         }
     }    
     for (int i = 1; i < argc; i++) //determine whether each argument is a directory or a file
     {
         if (i != flag_index)
         {
-            if (item_type(argv[i]) == 0) //logs directories into the directory array
+            if (item_type(argv[i]) == -1)
+            {
+                log_item(argv[i], data.does_not_exist, data.dne_count);
+                data.dne_count++;
+            }
+            else if (item_type(argv[i]) == 0) //logs directories into the directory array
             {
                 log_item(argv[i], data.directories, data.directory_count);
                 data.directory_count++;
@@ -51,6 +62,10 @@ int main(int argc, char *argv[])
     }
     printf("flagA = %d\n", data.flagA);
     printf("flagT = %d\n", data.flagT);
+    for (int i = 0; i < data.dne_count; i++)
+    {
+        printf("does_not_exist[%d] =  %s\n", i, data.does_not_exist[i]);
+    }
     for (int i = 0; i < data.file_count; i++)
     {
         printf("file[%d] =  %s\n", i, data.files[i]);
