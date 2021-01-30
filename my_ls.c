@@ -67,30 +67,53 @@ int main(int argc, char *argv[])
             if (item_type(argv[i]) == -1)
             {
                 node* non_item = create_link(argv[i]);
-                printf("%p\n", data.does_not_exist);
-                append_link(non_item, data.does_not_exist);
-                printf("%p\n", data.does_not_exist);
-                read_list(data.does_not_exist);
+                if (data.does_not_exist == NULL)
+                {
+                    data.does_not_exist = non_item;
+                }
+                else
+                {
+                    append_link(non_item, data.does_not_exist);
+                }
                 // log_item(argv[i], data.does_not_exist, data.dne_count);
                 // data.dne_count++;
             }
             else if (item_type(argv[i]) == 0) //logs directories into the directory array
             {
                 node* dir = create_link(argv[i]);
-                data.directories = sort_link(dir, data.directories, data.flagT);
+                if(data.directories == NULL)
+                {
+                    data.directories = dir;
+                }
+                else
+                {
+                    data.directories = sort_link(dir, data.directories, data.flagT);
+                }                
                 // log_item(argv[i], data.directories, data.directory_count);
                 // data.directory_count++;
             }
             else if (item_type(argv[i]) == 1) //logs files into the file array
             {
                 node* file = create_link(argv[i]);
-                data.files = sort_link(file, data.files, data.flagT);
+                if (data.files == NULL)
+                {
+                    data.files = file;
+                }
+                else
+                {
+                    data.files = sort_link(file, data.files, data.flagT);
+                }
                 // log_item(argv[i], data.files, data.file_count);
                 // data.file_count++;
             }
         }        
     }
-
+    printf("data.does_not_exist:\n");
+    read_list(data.does_not_exist);
+    printf("\ndata.directories:\n");
+    read_list(data.directories);
+    printf("\ndata.files:\n");
+    read_list(data.files);
 
 
     // printf("flagA = %d\n", data.flagA);

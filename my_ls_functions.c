@@ -150,21 +150,13 @@ node* create_link(char* data)
 }
 
 void append_link(node* new_link, node* head)
-{
-    if (head == NULL)
+{   
+    node* current = head;
+    while(current->next != NULL)
     {
-        node** temp = &head;
-        *temp = new_link;
+        current = current->next;
     }
-    else
-    {
-        node* current = head;
-        while(current->next != NULL)
-        {
-            current = current->next;
-        }
-        current->next = new_link;
-    }
+    current->next = new_link;
 }
 
 void insert_link(node* new_link, node* previous_link)
