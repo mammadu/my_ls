@@ -141,11 +141,28 @@ int read_list(node* head)
     return index;
 }
 
+long int time_mod_sec(char* data) //what happens when this goes on an non-existing file?
+{
+    struct stat filestat;
+    lstat(data, &filestat);
+    return filestat.st_mtim.tv_sec;
+}
+
+long int time_mod_nano(char* data)
+{
+    struct stat filestat;
+    lstat(data, &filestat);
+    return filestat.st_mtim.tv_nsec;
+}
+
+
 node* create_link(char* data)
 {
     node* link = malloc(sizeof(node));
     link->string = strdup(data);
-    link->next = NULL;
+    link->time_sec = time_mod_sec(data);
+    link->time_nano_sec = time_mod_nano(data);
+    link->next = NULL;    
     return link;
 }
 
