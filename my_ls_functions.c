@@ -155,6 +155,20 @@ long int time_mod_nano(char* data)
     return filestat.st_mtim.tv_nsec;
 }
 
+int compare_time(node* first_link, node* second_link)
+{
+    int sec_diff = first_link->time_sec - second_link->time_sec;
+    int nano_diff = first_link->time_nano_sec - second_link->time_nano_sec;
+    if (sec_diff == 0)
+    {
+        return nano_diff;
+    }
+    else
+    {
+        return sec_diff;
+    }
+}
+
 
 node* create_link(char* data)
 {
@@ -220,7 +234,30 @@ node* sort_lexico(node* new_link, node* head) //for sorting lexicographically. m
 
 node* sort_mod_time(node* new_link, node* head)
 {
+    node* current = head;
     
+    //Case if new_link should go before head
+    if (compare_time(new_link, head) > 0) //if new_link is newer (made after) head
+    {
+        return prepend_link(new_link, current);
+    }
+    else
+    {
+        while (current->next != NULL)// case where link gets inserted bewteen links
+        {
+            if (compare_time(new_link, current->next) > 0)
+            {
+                insert_link(new_link,current);
+                return head;
+            }
+            else
+            {
+                current = current->next;
+            }
+        }
+        insert_link(new_link,current); //case where link gets added to the end.
+        return head;
+    }
 }
 
 node* sort_link(node* new_link, node* head, int flagT) //reads the flag to determine to sort lexicographically or based on time modified. make sure to always return the head

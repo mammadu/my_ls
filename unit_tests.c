@@ -65,5 +65,5 @@ int print_dir()
 
 int main()
 {
-    return link_sort_test();
+    return print_dir();
 }
