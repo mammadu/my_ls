@@ -44,15 +44,15 @@ int print_dir()
         stat(entry->d_name,&filestat);
         if( S_ISDIR(filestat.st_mode) )
         {
-            printf("%s: %s\n","Dir",entry->d_name);
-            printf("timestamp: %ld\n", filestat.st_mtime);
-            printf("timestamp nano: %ld\n", filestat.st_mtim.tv_nsec);
+            printf("%5s: %-20s %ld:%ld\n", "DIR", entry->d_name, filestat.st_mtime, filestat.st_mtim.tv_nsec);
+            // printf("timestamp: %ld\n", filestat.st_mtime);
+            // printf("timestamp nano: %ld\n", filestat.st_mtim.tv_nsec);
         }         
         else
         {
-            printf("%s: %s\n","File",entry->d_name);
-            printf("timestamp: %ld\n", filestat.st_mtim.tv_sec);
-            printf("timestamp nano: %ld\n", filestat.st_mtim.tv_nsec);
+            printf("%5s: %-20s %ld:%ld\n", "FILE", entry->d_name, filestat.st_mtim.tv_sec, filestat.st_mtim.tv_nsec);
+            // printf("timestamp: %ld\n", filestat.st_mtim.tv_sec);
+            // printf("timestamp nano: %ld\n", filestat.st_mtim.tv_nsec);
         }
     }
     closedir(folder);
@@ -61,9 +61,8 @@ int print_dir()
 }
 
 
-
-
 int main()
 {
+    // printf("sametime1 vs sametime2 = %d", strcmp("sametime1", "sametime2"));
     return print_dir();
 }

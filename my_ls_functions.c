@@ -237,7 +237,19 @@ node* sort_mod_time(node* new_link, node* head)
     node* current = head;
     
     //Case if new_link should go before head
-    if (compare_time(new_link, head) > 0) //if new_link is newer (made after) head
+    if(compare_time(new_link, current) == 0)
+    {
+        if (strcmp(new_link->string, current->string) < 0) //if new_link goes before current->next lexicographically
+                {
+                    return prepend_link(new_link, current);
+                }
+                else
+                {
+                    insert_link(new_link, current);
+                    return head;
+                }
+    }
+    if (compare_time(new_link, current) > 0) //if new_link is newer (made after) head
     {
         return prepend_link(new_link, current);
     }
@@ -245,7 +257,20 @@ node* sort_mod_time(node* new_link, node* head)
     {
         while (current->next != NULL)// case where link gets inserted bewteen links
         {
-            if (compare_time(new_link, current->next) > 0)
+            if(compare_time(new_link, current->next) == 0)
+            {
+                if (strcmp(new_link->string, current->next->string) < 0) //if new_link goes before current->next lexicographically
+                {
+                    insert_link(new_link, current);
+                    return head;
+                }
+                else
+                {
+                    insert_link(new_link, current->next);
+                    return head;
+                }                
+            }
+            else if (compare_time(new_link, current->next) > 0)
             {
                 insert_link(new_link,current);
                 return head;
