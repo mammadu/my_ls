@@ -21,9 +21,10 @@ unit_tests.o: unit_tests.c my_ls_functions.h
 
 ls_test:
 	@echo ""
-	ls -1t
+	ls -1a
+
 my_ls_sort: my_ls
-	./my_ls unit_tests unit_tests.o unit_tests.c my_ls my_ls_functions.o my_ls.o bunga .git my_project2 my_project README.md my_ls.c printdir.c my_ls_functions.c my_ls_functions.h makefile unga ungabunga sametime2 sametime1 -t
+	./my_ls -a
 
 unit_tests_time: unit_tests
 	./unit_tests

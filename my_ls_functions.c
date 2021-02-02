@@ -35,7 +35,7 @@ typedef struct node
     char* string;
     long int time_sec;
     long int time_nano_sec;
-    struct node* head;
+    struct node* sub_items;
     struct node* next;
 }node;
 
@@ -176,6 +176,7 @@ node* create_link(char* data)
     link->string = strdup(data);
     link->time_sec = time_mod_sec(data);
     link->time_nano_sec = time_mod_nano(data);
+    link->sub_items = NULL;
     link->next = NULL;    
     return link;
 }
@@ -294,6 +295,44 @@ node* sort_link(node* new_link, node* head, int flagT) //reads the flag to deter
     else
     {
         return sort_mod_time(new_link, head);
+    }
+}
+
+void fill_dir(node* link, int flagA, int flagT)//lists the items in a directory
+{
+    
+    DIR *folder;
+    struct dirent *entry;
+    struct stat filestat;
+    folder = opendir(link->string);
+    while( (entry=readdir(folder)) )
+    {
+        if (flagA == 0 && entry->d_name[0] == '.')
+        {
+            continue;
+        }
+        else
+        {
+            node* dir_item = create_link(entry->d_name);
+            if (link->sub_items == NULL)
+            {
+                link->sub_items = dir_item;
+            }
+            else
+            {
+                link->sub_items = sort_link(dir_item, link->sub_items, flagT);
+            }
+        }
+    }
+}
+
+void fill_all_dir(lsd data)//lists the items in every directory in the linked list
+{
+    node* current = data.directories;
+    while (current != NULL)
+    {
+        fill_dir(current, data.flagA, data.flagT);
+        current = current->next;
     }
 }
 

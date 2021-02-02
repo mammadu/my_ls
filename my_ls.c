@@ -37,29 +37,6 @@ int main(int argc, char *argv[])
         }
     }
 
-
-    // for (int i = 1; i < argc; i++) //determine whether each argument is a directory or a file
-    // {
-    //     if (i != flag_index)
-    //     {
-    //         if (item_type(argv[i]) == -1)
-    //         {
-    //             log_item(argv[i], data.does_not_exist, data.dne_count);
-    //             data.dne_count++;
-    //         }
-    //         else if (item_type(argv[i]) == 0) //logs directories into the directory array
-    //         {
-    //             log_item(argv[i], data.directories, data.directory_count);
-    //             data.directory_count++;
-    //         }
-    //         else if (item_type(argv[i]) == 1) //logs files into the file array
-    //         {
-    //             log_item(argv[i], data.files, data.file_count);
-    //             data.file_count++;
-    //         }
-    //     }        
-    // }
-
     for (int i = 1; i < argc; i++) //determine whether each argument is a directory or a file
     {
         if (i != flag_index)
@@ -75,8 +52,7 @@ int main(int argc, char *argv[])
                 {
                     append_link(non_item, data.does_not_exist);
                 }
-                // log_item(argv[i], data.does_not_exist, data.dne_count);
-                // data.dne_count++;
+                data.dne_count++;
             }
             else if (item_type(argv[i]) == 0) //logs directories into the directory array
             {
@@ -88,9 +64,8 @@ int main(int argc, char *argv[])
                 else
                 {
                     data.directories = sort_link(dir, data.directories, data.flagT);
-                }                
-                // log_item(argv[i], data.directories, data.directory_count);
-                // data.directory_count++;
+                }
+                data.directory_count++;
             }
             else if (item_type(argv[i]) == 1) //logs files into the file array
             {
@@ -103,33 +78,26 @@ int main(int argc, char *argv[])
                 {
                     data.files = sort_link(file, data.files, data.flagT);
                 }
-                // log_item(argv[i], data.files, data.file_count);
-                // data.file_count++;
+                data.file_count++;
             }
         }        
     }
-    printf("data.does_not_exist:\n");
-    read_list(data.does_not_exist);
-    printf("\ndata.directories:\n");
-    read_list(data.directories);
-    printf("\ndata.files:\n");
-    read_list(data.files);
+    // printf("data.does_not_exist:\n");
+    // read_list(data.does_not_exist);
+    // printf("\ndata.directories:\n");
+    // read_list(data.directories);
+    // printf("\ndata.files:\n");
+    // read_list(data.files);
+    
+    if (data.dne_count == 0 && data.directory_count == 0 && data.file_count == 0) //This is for the case that LS receives no arguments
+    {
+        data.directories = create_link(".");
+    }
 
+    fill_all_dir(data);
+    read_list(data.directories->sub_items);
 
-    // printf("flagA = %d\n", data.flagA);
-    // printf("flagT = %d\n", data.flagT);
-    // for (int i = 0; i < data.dne_count; i++)
-    // {
-    //     printf("does_not_exist[%d] =  %s\n", i, data.does_not_exist[i]);
-    // }
-    // for (int i = 0; i < data.file_count; i++)
-    // {
-    //     printf("file[%d] =  %s\n", i, data.files[i]);
-    // }
-    // for (int i = 0; i < data.directory_count; i++)
-    // {
-    //     printf("directory[%d] = %s\n", i, data.directories[i]);
-    // }
+    
 }
 
 /*

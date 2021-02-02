@@ -14,7 +14,7 @@ typedef struct node
     char* string;
     long int time_sec;
     long int time_nano_sec;
-    struct node* head;
+    struct node* sub_items;
     struct node* next;
 }node;
 
@@ -50,5 +50,9 @@ node* sort_lexico(node* new_link, node* head);
 node* sort_mod_time(node* new_link, node* head);
 
 node* sort_link(node* new_link, node* head, int flagT);
+
+void fill_dir(node* link, int flagT);
+
+void fill_all_dir(lsd data);
 
 #endif

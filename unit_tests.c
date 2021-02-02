@@ -39,6 +39,7 @@ int print_dir()
     }
 
     /* Read directory entries */
+    
     while( (entry=readdir(folder)) )
     {
         stat(entry->d_name,&filestat);
