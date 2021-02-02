@@ -1,16 +1,3 @@
-/*
-printdir.c will do the following:
-
-*open directories
-*read the names of the items in the directory
-*depending on if this is a file or directory, sort it into the proper data structure
-*Organize data structures lexicographically
-*interpret flags
-**-a: Include directory entries whose names begin with a dot (.).
-**-t: Sort by time modified (most recently modified first) before sorting the operands by lexicographical order.
-*print out final data structure
-*/
-
 #include <dirent.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -18,17 +5,6 @@ printdir.c will do the following:
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
-
-// typedef struct ls_data{
-//    int directory_count;
-//    char** directories;
-//    int file_count;
-//    char** files;
-//    int dne_count;
-//    char** does_not_exist;
-//    int flagA;
-//    int flagT;
-// }lsd;
 
 typedef struct node
 {
@@ -50,20 +26,6 @@ typedef struct ls_data{
    int flagT;
 }lsd;
 
-// lsd create_struct(int size) //function to make the struct. Size should be the maximum number of arguments you expect to encounter
-// {
-//     lsd data;
-//     data.directory_count = 0;
-//     data.file_count = 0;
-//     data.dne_count = 0;
-//     data.flagA = 0;
-//     data.flagT = 0;
-//     data.directories = malloc(size * sizeof(ll*));
-//     data.files = malloc(size * sizeof(ll*));
-//     data.does_not_exist = malloc(size * sizeof(ll*));
-//     return data;
-// }
-
 lsd create_struct() //function to make the struct. Size should be the maximum number of arguments you expect to encounter
 {
     lsd data;
@@ -78,6 +40,24 @@ lsd create_struct() //function to make the struct. Size should be the maximum nu
     return data;
 }
 
+char* combine_strings(char* first_string, char* second_string)
+{
+    char* return_val = malloc((strlen(first_string) + strlen(second_string)) * sizeof(char));
+    int i = 0;
+    while (first_string[i] != '\0')
+    {
+        return_val[i] = first_string[i];
+        i++;
+    }
+    int j = 0;
+    while (second_string[j] != '\0')
+    {
+        return_val[i] = second_string[j];
+        i++;
+        j++;
+    }
+    return return_val;
+}
 
 int read_flag(char* param_1, lsd* data) //this function will check for specific flags
 {
@@ -119,23 +99,13 @@ int item_type(char* param_1) //this determines if an entry is a not a real path 
     }
 }
 
-// void log_item(char* string, char** string_array, int index) //this logs strings to a string array at the specified index
-// {
-//     int length = strlen(string);
-//     string_array[index] = malloc(length * sizeof(char));
-//     for (int i = 0; i < length; i++)
-//     {
-//         string_array[index][i] = string[i];
-//     }
-// }
-
 int read_list(node* head)
 {  
     int index = 0;
     while (head != NULL)
     {
         index++;
-        printf("%s\n", head->string);
+        printf("%s  ", head->string);
         head = head->next;
     }
     return index;
@@ -204,7 +174,6 @@ node* prepend_link(node* new_link, node* head)
     return head;
 }
 
-
 node* sort_lexico(node* new_link, node* head) //for sorting lexicographically. make sure to always return the head
 {
     node* current = head;
@@ -241,14 +210,14 @@ node* sort_mod_time(node* new_link, node* head)
     if(compare_time(new_link, current) == 0)
     {
         if (strcmp(new_link->string, current->string) < 0) //if new_link goes before current->next lexicographically
-                {
-                    return prepend_link(new_link, current);
-                }
-                else
-                {
-                    insert_link(new_link, current);
-                    return head;
-                }
+        {
+            return prepend_link(new_link, current);
+        }
+        else
+        {
+            insert_link(new_link, current);
+            return head;
+        }
     }
     if (compare_time(new_link, current) > 0) //if new_link is newer (made after) head
     {
@@ -305,6 +274,7 @@ void fill_dir(node* link, int flagA, int flagT)//lists the items in a directory
     struct dirent *entry;
     struct stat filestat;
     folder = opendir(link->string);
+    // int i = 0;
     while( (entry=readdir(folder)) )
     {
         if (flagA == 0 && entry->d_name[0] == '.')
@@ -314,6 +284,11 @@ void fill_dir(node* link, int flagA, int flagT)//lists the items in a directory
         else
         {
             node* dir_item = create_link(entry->d_name);
+            //The next 4 lines update the modification time of the item. I'll have to make a function for this.
+            char* path = combine_strings(link->string, "/");
+            path = combine_strings(path, entry->d_name);
+            dir_item->time_sec = time_mod_sec(path);
+            dir_item->time_nano_sec = time_mod_nano(path);
             if (link->sub_items == NULL)
             {
                 link->sub_items = dir_item;
@@ -323,6 +298,7 @@ void fill_dir(node* link, int flagA, int flagT)//lists the items in a directory
                 link->sub_items = sort_link(dir_item, link->sub_items, flagT);
             }
         }
+        // i++;
     }
 }
 
@@ -336,11 +312,44 @@ void fill_all_dir(lsd data)//lists the items in every directory in the linked li
     }
 }
 
+void read_dir(lsd data)
+{
+    if (data.directory_count < 2)
+    {
+        read_list(data.directories->sub_items);
+    }
+    else
+    {
+        node* current = data.directories;
+        while(current != NULL)
+        {
+            printf("%s:\n", current->string);
+            if(read_list(current->sub_items) > 0)
+            {
+                printf("\n");
+            }
+            if (current->next != NULL)
+            {
+                printf("\n");
+            }
+            current = current->next;
+        }
+        
+    }
+}
+
+void read_does_not_exist(node* does_not_exist)
+{
+    node* current = does_not_exist;
+    while (current != NULL)
+    {
+        printf("my_ls: cannot access '%s': No such file or directory\n", current->string);
+        current = current->next;
+    }
+}
+
 
 /*
 Next steps:
-
-create function to organize string arrays according to a flag
-create a function to read items inside a directory to a string array
 
 */

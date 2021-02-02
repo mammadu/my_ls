@@ -61,7 +61,6 @@ int print_dir()
     return(0);
 }
 
-
 int main()
 {
     // printf("sametime1 vs sametime2 = %d", strcmp("sametime1", "sametime2"));

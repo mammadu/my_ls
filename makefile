@@ -21,10 +21,10 @@ unit_tests.o: unit_tests.c my_ls_functions.h
 
 ls_test:
 	@echo ""
-	ls -1a
+	ls tits my_project myproject2 sametime1 sametime2 empty_folder makefile
 
 my_ls_sort: my_ls
-	./my_ls -a
+	./my_ls tits my_project myproject2 sametime1 sametime2 empty_folder makefile
 
 unit_tests_time: unit_tests
 	./unit_tests

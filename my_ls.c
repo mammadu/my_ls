@@ -1,5 +1,5 @@
 /*
-My goal is to make my own version of my_ls
+My goal is to make my own version of ls
 
 the cmd line call will be as follows:
 ./my_ls [-at] [file ...]
@@ -82,12 +82,6 @@ int main(int argc, char *argv[])
             }
         }        
     }
-    // printf("data.does_not_exist:\n");
-    // read_list(data.does_not_exist);
-    // printf("\ndata.directories:\n");
-    // read_list(data.directories);
-    // printf("\ndata.files:\n");
-    // read_list(data.files);
     
     if (data.dne_count == 0 && data.directory_count == 0 && data.file_count == 0) //This is for the case that LS receives no arguments
     {
@@ -95,15 +89,19 @@ int main(int argc, char *argv[])
     }
 
     fill_all_dir(data);
-    read_list(data.directories->sub_items);
-
-    
+    if(data.dne_count > 0)
+    {
+        read_does_not_exist(data.does_not_exist);
+    }
+    if(data.file_count > 0)
+    {
+        read_list(data.files);
+        printf("\n\n");
+    }    
+    read_dir(data);
 }
 
 /*
 Next steps:
-
-complete printdir.c file
-determine how to handle no arguments
 
 */

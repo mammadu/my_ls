@@ -55,4 +55,8 @@ void fill_dir(node* link, int flagT);
 
 void fill_all_dir(lsd data);
 
+void read_dir(lsd data);
+
+void read_does_not_exist(node* does_not_exist);
+
 #endif
