@@ -365,8 +365,7 @@ void read_dir(lsd data)
                 printf("\n");
             }
             current = current->next;
-        }
-        
+        }        
     }
 }
 

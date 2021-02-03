@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
     for (int i = 1; i < argc; i++) //determine whether each argument is a directory or a file
     {
-        if (i != flag_index)
+        if (argv[i][0] != '-')
         {
             if (item_type(argv[i]) == -1)
             {
@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
     if (data.dne_count == 0 && data.directory_count == 0 && data.file_count == 0) //This is for the case that LS receives no arguments
     {
         data.directories = create_link(".");
+        data.directory_count++;
     }
 
     fill_all_dir(data);
@@ -97,8 +98,12 @@ int main(int argc, char *argv[])
     {
         read_list(data.files);
         printf("\n\n");
+    }
+    if (data.directory_count > 0)
+    {
+        read_dir(data);
+        printf("\n");
     }    
-    read_dir(data);
 }
 
 /*
