@@ -40,9 +40,19 @@ lsd create_struct() //function to make the struct. Size should be the maximum nu
     return data;
 }
 
+int string_length(char* string)
+{
+    int i = 0;
+    while(string[i] != '\0')
+    {
+        i++;
+    }
+    return i;
+}
+
 char* combine_strings(char* first_string, char* second_string)
 {
-    char* return_val = malloc((strlen(first_string) + strlen(second_string)) * sizeof(char));
+    char* return_val = malloc((string_length(first_string) + string_length(second_string)) * sizeof(char));
     int i = 0;
     while (first_string[i] != '\0')
     {
@@ -139,11 +149,34 @@ int compare_time(node* first_link, node* second_link)
     }
 }
 
+int compare_lexico(char* first_string, char* second_string)
+{
+    int diff = 0;
+    int i = 0;
+    while (first_string[i] != '\0' && second_string[i] != '\0' && first_string[i] == second_string[i])
+    {
+        i++;
+    }
+    diff = first_string[i] - second_string[i];
+    return diff;
+}
+
+char* my_strdup(char* param_1)
+{
+    char* str_copy;
+    int length = string_length(param_1);
+    str_copy = (char*)malloc(length * sizeof(char));
+    for(int i = 0; i < length; i++)
+    {
+        str_copy[i] = param_1[i];
+    }
+    return str_copy;
+}
 
 node* create_link(char* data)
 {
     node* link = malloc(sizeof(node));
-    link->string = strdup(data);
+    link->string = my_strdup(data);
     link->time_sec = time_mod_sec(data);
     link->time_nano_sec = time_mod_nano(data);
     link->sub_items = NULL;
@@ -179,7 +212,7 @@ node* sort_lexico(node* new_link, node* head) //for sorting lexicographically. m
     node* current = head;
 
     //Case if new_link should go before head
-    if (strcmp(new_link->string, current->string) < 0) //if new_link is lexicographically smaller (comes before) head
+    if (compare_lexico(new_link->string, current->string) < 0) //if new_link is lexicographically smaller (comes before) head
     {
         return prepend_link(new_link, current);
     }
@@ -187,7 +220,7 @@ node* sort_lexico(node* new_link, node* head) //for sorting lexicographically. m
     {
         while (current->next != NULL)// case where link gets inserted bewteen links
         {
-            if (strcmp(new_link->string, current->next->string) < 0)
+            if (compare_lexico(new_link->string, current->next->string) < 0)
             {
                 insert_link(new_link,current);
                 return head;
@@ -209,7 +242,7 @@ node* sort_mod_time(node* new_link, node* head)
     //Case if new_link should go before head
     if(compare_time(new_link, current) == 0)
     {
-        if (strcmp(new_link->string, current->string) < 0) //if new_link goes before current->next lexicographically
+        if (compare_lexico(new_link->string, current->string) < 0) //if new_link goes before current->next lexicographically
         {
             return prepend_link(new_link, current);
         }
@@ -229,7 +262,7 @@ node* sort_mod_time(node* new_link, node* head)
         {
             if(compare_time(new_link, current->next) == 0)
             {
-                if (strcmp(new_link->string, current->next->string) < 0) //if new_link goes before current->next lexicographically
+                if (compare_lexico(new_link->string, current->next->string) < 0) //if new_link goes before current->next lexicographically
                 {
                     insert_link(new_link, current);
                     return head;
@@ -298,7 +331,6 @@ void fill_dir(node* link, int flagA, int flagT)//lists the items in a directory
                 link->sub_items = sort_link(dir_item, link->sub_items, flagT);
             }
         }
-        // i++;
     }
 }
 

@@ -20,11 +20,11 @@ unit_tests.o: unit_tests.c my_ls_functions.h
 	gcc -c unit_tests.c
 
 ls_test:
-	@echo ""
-	ls tits my_project myproject2 sametime1 sametime2 empty_folder makefile
+	@echo "\n"
+	ls 
 
 my_ls_sort: my_ls
-	./my_ls tits my_project myproject2 sametime1 sametime2 empty_folder makefile
+	./my_ls 
 
 unit_tests_time: unit_tests
 	./unit_tests
